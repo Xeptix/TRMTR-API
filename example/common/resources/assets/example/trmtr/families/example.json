@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "requires": "1.0",
+  "_": "Which of the example's blocks wear, and as what. Mossy loam is mended with loam; the runestone takes twice the traffic.",
+  "entries": [
+    { "blocks": ["example:mossy_loam"], "family": "grass", "repairWith": ["example:loam"] },
+    { "blocks": ["example:loam", "example:loam_step"], "family": "dirt" },
+    { "blocks": ["example:runestone"], "family": "stone", "resistance": 2.0 }
+  ]
+}

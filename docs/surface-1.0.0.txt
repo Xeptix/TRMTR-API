@@ -1,0 +1,88 @@
+# trmtr-api 1.0.0: the public surface of package com.trmtgtnh.api, one line per member, names relative to it.
+# Each later version is held to this record (DEPRECATION.md). A patch keeps it; a minor writes surface-1.x.0.txt.
+# type <name> <kind> [implemented-by-trmtr] [deprecated]
+# method <type>.<name>(<parameter types>) <return> <abstract|default|static|instance> [final] [deprecated]
+# constructor <type>(<parameter types>) [deprecated]
+# field <type>.<name> <type> [static] [final] [deprecated]
+# constant <enum>.<name>
+# TrmtrApi.VERSION's value is not part of the surface.
+format 1
+constant WearContext.Cause.API
+constant WearContext.Cause.BLAST
+constant WearContext.Cause.COMMAND
+constant WearContext.Cause.GOLEM
+constant WearContext.Cause.IMPACT
+constant WearContext.Cause.MOUNT
+constant WearContext.Cause.STEP
+field TrmtrApi.VERSION String static final
+method Actions.forget(Object,int,int,int) boolean abstract
+method Actions.freeze(Object,int,int,int,boolean) boolean abstract
+method Actions.restore(Object,int,int,int,int) boolean abstract
+method Actions.wear(Object,int,int,int,float) boolean abstract
+method GroundRule.mayWear(Object,int,int,int,String,Object) boolean abstract
+method Queries.chainLength(String) int abstract
+method Queries.chainLengthAt(Object,int,int,int) int abstract
+method Queries.familyAt(Object,int,int,int) String abstract
+method Queries.familyOf(Object) String abstract
+method Queries.familyOf(String) String abstract
+method Queries.wearAt(Object,int,int,int) Wear abstract
+method Registrar.data(String,String) void abstract
+method Registrar.groundRule(GroundRule) void abstract
+method Registrar.renderer(String,WearRenderer) void abstract
+method Registrar.wearListener(WearListener) void abstract
+method Registrar.wearerRule(WearerRule) void abstract
+method Trmtr.actions() Actions abstract
+method Trmtr.atLeast(int,int) boolean abstract
+method Trmtr.families() List<String> abstract
+method Trmtr.format() int abstract
+method Trmtr.queries() Queries abstract
+method Trmtr.version() String abstract
+method TrmtrApi.get() Trmtr static
+method TrmtrPlugin.register(Registrar) void abstract
+method Wear.appearance() String abstract
+method Wear.family() String abstract
+method Wear.fraction() float abstract
+method Wear.frozen() boolean abstract
+method Wear.progress() float abstract
+method Wear.reinforcement() int abstract
+method Wear.sinkPixels() int abstract
+method Wear.stage() int abstract
+method Wear.step() int abstract
+method Wear.steps() int abstract
+method WearContext.block() String abstract
+method WearContext.cause() Cause abstract
+method WearContext.entity() Object abstract
+method WearContext.level() Object abstract
+method WearContext.x() int abstract
+method WearContext.y() int abstract
+method WearContext.z() int abstract
+method WearDraw.block() String abstract
+method WearDraw.box(float,float,float,float,float,float,int) void abstract
+method WearDraw.light() int abstract
+method WearDraw.nativeContext() Object abstract
+method WearDraw.quad(float[],float[],int,int) void abstract
+method WearDraw.sprite(int) Object abstract
+method WearDraw.tint(int) int abstract
+method WearDraw.wear() Wear abstract
+method WearDraw.x() int abstract
+method WearDraw.y() int abstract
+method WearDraw.z() int abstract
+method WearListener.afterChange(Object,int,int,int,Wear,Wear) void default
+method WearListener.beforeWear(WearContext,float) float default
+method WearRenderer.draw(WearDraw) boolean abstract
+method WearerRule.multiplier(Object,String,float) float abstract
+type Actions interface implemented-by-trmtr
+type GroundRule interface
+type ImplementedByTrmtr annotation
+type Queries interface implemented-by-trmtr
+type Registrar interface implemented-by-trmtr
+type Trmtr interface implemented-by-trmtr
+type TrmtrApi final class
+type TrmtrPlugin interface
+type Wear interface implemented-by-trmtr
+type WearContext interface implemented-by-trmtr
+type WearContext.Cause enum
+type WearDraw interface implemented-by-trmtr
+type WearListener interface
+type WearRenderer interface
+type WearerRule interface

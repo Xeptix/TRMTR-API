@@ -1,0 +1,39 @@
+{
+  "format": 1,
+  "requires": "1.0",
+  "_": "Looks of the TRMTR example pack. Vanilla grass is spelled for every edition side by side: each edition reads the name it has and skips the other.",
+  "entries": [
+    {
+      "blocks": [
+        "minecraft:gravel"
+      ],
+      "look": "crack"
+    },
+    {
+      "blocks": [
+        "example:mossy_loam"
+      ],
+      "look": "grass",
+      "strength": 0.8
+    },
+    {
+      "blocks": [
+        "minecraft:grass",
+        "minecraft:grass_block"
+      ],
+      "look": "grass",
+      "strength": 0.9
+    },
+    {
+      "blocks": [
+        "example:runestone"
+      ],
+      "stages": [
+        "example:block/trmtr/runestone_0",
+        "example:block/trmtr/runestone_1",
+        "example:block/trmtr/runestone_2",
+        "example:block/trmtr/runestone_3"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "requires": "1.0",
+  "_": "Data half of the TRMTR example pack: vanilla clay wears as dirt.",
+  "entries": [
+    {
+      "blocks": [
+        "minecraft:clay"
+      ],
+      "family": "dirt"
+    }
+  ]
+}

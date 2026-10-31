@@ -1,0 +1,9 @@
+{
+  "format": 1,
+  "requires": "1.0",
+  "_": "The loam step is 12 pixels tall and sinks at most 4; the runestone's wear stays flat on its face.",
+  "entries": [
+    { "blocks": ["example:loam_step"], "shape": "boxes", "boxes": [[0, 0, 0, 16, 12, 16]], "maxSinkPixels": 4 },
+    { "blocks": ["example:runestone"], "shape": "full", "sinks": false }
+  ]
+}

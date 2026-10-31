@@ -1,0 +1,9 @@
+{
+  "format": 1,
+  "requires": "1.0",
+  "_": "How the example's worn ground is drawn, by look id alone, so one file serves every edition. A pack may override any key.",
+  "entries": [
+    { "blocks": ["example:mossy_loam"], "look": "grass" },
+    { "blocks": ["example:loam", "example:loam_step"], "look": "dirt" }
+  ]
+}

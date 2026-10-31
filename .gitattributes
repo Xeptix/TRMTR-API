@@ -1,0 +1,6 @@
+# Written by the export. The Maven files are served byte for byte and checked by their checksums, so git keeps them
+# as bytes; the rest is text with Unix line endings.
+* text eol=lf
+maven/** binary
+*.png binary
+*.jar binary

@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TRMTR data, format 1",
+  "description": "The files a mod, a pack or a config folder gives TRMT: Reimagined, under trmtr/<kind>/<name>.json, and the plugin.json beside them. A file's kind is its folder, so point an editor at #/$defs/families, #/$defs/looks, #/$defs/shapes, #/$defs/wearers or #/$defs/plugin; the whole schema accepts any of the five. TRMTR itself warns once about a key it does not know and goes on, where this schema marks it. FORMAT.md is the prose for every key here.",
+  "anyOf": [
+    { "$ref": "#/$defs/families" },
+    { "$ref": "#/$defs/looks" },
+    { "$ref": "#/$defs/shapes" },
+    { "$ref": "#/$defs/wearers" },
+    { "$ref": "#/$defs/plugin" }
+  ],
+  "$defs": {
+    "formatOne": {
+      "title": "integer",
+      "description": "The file format. Required; a file without it, or with a higher one, is refused whole.",
+      "const": 1
+    },
+    "requires": {
+      "title": "string",
+      "description": "The lowest trmtr-api minor version the file needs, as major.minor. An older TRMTR skips the whole file with one line.",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
+    "note": {
+      "title": "anything",
+      "description": "Free text for whoever reads the file. Ignored."
+    },
+    "blockSelector": {
+      "type": "string",
+      "description": "ns:name (every state), ns:name:3 or ns:name:* (metadata, 1.7.10 and 1.12.2), ns:name[prop=value,...] (block-state properties, 1.12.2 on), #ns:tag (a block tag, 1.16.5 on). Names are the edition's own; a name that is not installed is skipped.",
+      "pattern": "^(#[-A-Za-z0-9_.]+:[-A-Za-z0-9_./]+|[-A-Za-z0-9_.]+:[-A-Za-z0-9_./]+(:([0-9]+|\\*))?(\\[[a-z0-9_]+=[a-z0-9_]+(,[a-z0-9_]+=[a-z0-9_]+)*\\])?)$"
+    },
+    "blockList": {
+      "title": "list of block selectors",
+      "type": "array",
+      "items": { "$ref": "#/$defs/blockSelector" },
+      "minItems": 1
+    },
+    "entityList": {
+      "title": "list of entity selectors",
+      "description": "Entity ids in the edition's own spelling (Zombie or modid.Name on 1.7.10, ns:name from 1.12.2), or #ns:tag where entity tags exist.",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^#?[-A-Za-z0-9_.:/]+$" },
+      "minItems": 1
+    },
+    "texture": {
+      "title": "texture name",
+      "description": "A texture in the edition's own spelling: an icon name on 1.7.10 (example:loam_top), a sprite path from 1.12.2 (example:blocks/loam_top on 1.12.2, example:block/loam_top from 1.16.5).",
+      "type": "string",
+      "pattern": "^([-A-Za-z0-9_.]+:)?[-A-Za-z0-9_./]+$"
+    },
+    "stagePictures": {
+      "title": "list of texture names",
+      "type": "array",
+      "items": { "$ref": "#/$defs/texture" },
+      "minItems": 2,
+      "maxItems": 16
+    },
+    "familyChain": {
+      "title": "list of strings",
+      "type": "array",
+      "items": { "enum": ["grass", "dirt", "sand", "gravel", "stone", "cobble", "nether", "end", "snow", "ice"] },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "boxes": {
+      "title": "list of boxes",
+      "description": "Each box is [x0, y0, z0, x1, y1, z1] in pixels, 0 to 16.",
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": { "type": "integer", "minimum": 0, "maximum": 16 },
+        "minItems": 6,
+        "maxItems": 6
+      },
+      "minItems": 1,
+      "maxItems": 8
+    },
+    "familiesEntry": {
+      "type": "object",
+      "properties": {
+        "blocks": { "$ref": "#/$defs/blockList" },
+        "family": {
+          "type": "string",
+          "enum": ["grass", "dirt", "sand", "gravel", "stone", "cobble", "leaves", "vegetation", "nether", "end",
+                   "snow", "ice", "none"]
+        },
+        "resistance": { "type": "number", "minimum": 1.0, "maximum": 64.0 },
+        "repairWith": { "$ref": "#/$defs/blockList" },
+        "cover": { "type": "string", "enum": ["breaks", "holds"] },
+        "wearsThroughTo": { "$ref": "#/$defs/familyChain" }
+      },
+      "required": ["blocks"],
+      "minProperties": 2,
+      "additionalProperties": false
+    },
+    "looksEntry": {
+      "type": "object",
+      "properties": {
+        "blocks": { "$ref": "#/$defs/blockList" },
+        "look": {
+          "type": "string",
+          "enum": ["grass", "dirt", "sand", "polish", "crack", "smooth", "crack_lite", "smooth_heavy", "dirt_lite",
+                   "smooth_crack", "smooth_dirt", "crack_dirt", "crack_dirt_lite"]
+        },
+        "strength": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "face": { "$ref": "#/$defs/texture" },
+        "innerLayer": { "$ref": "#/$defs/texture" },
+        "stages": { "$ref": "#/$defs/stagePictures" }
+      },
+      "required": ["blocks"],
+      "minProperties": 2,
+      "additionalProperties": false
+    },
+    "shapesEntry": {
+      "type": "object",
+      "properties": {
+        "blocks": { "$ref": "#/$defs/blockList" },
+        "shape": { "type": "string", "enum": ["full", "slab", "stair", "boxes"] },
+        "state": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "meta": { "type": "integer", "minimum": 0, "maximum": 15 },
+        "boxes": { "$ref": "#/$defs/boxes" },
+        "maxSinkPixels": { "type": "integer", "minimum": 0, "maximum": 15 },
+        "sinks": { "type": "boolean" }
+      },
+      "required": ["blocks", "shape"],
+      "allOf": [
+        { "if": { "properties": { "shape": { "const": "boxes" } } }, "then": { "required": ["boxes"] } }
+      ],
+      "additionalProperties": false
+    },
+    "wearersEntry": {
+      "type": "object",
+      "properties": {
+        "entities": { "$ref": "#/$defs/entityList" },
+        "multiplier": { "type": "number", "minimum": 0.0, "maximum": 4.0 },
+        "group": { "type": "string", "enum": ["hostile", "passive", "villager"] }
+      },
+      "required": ["entities"],
+      "minProperties": 2,
+      "additionalProperties": false
+    },
+    "families": {
+      "type": "object",
+      "properties": {
+        "format": { "$ref": "#/$defs/formatOne" },
+        "requires": { "$ref": "#/$defs/requires" },
+        "_": { "$ref": "#/$defs/note" },
+        "entries": { "type": "array", "items": { "$ref": "#/$defs/familiesEntry" }, "maxItems": 4096 }
+      },
+      "required": ["format", "entries"],
+      "additionalProperties": false
+    },
+    "looks": {
+      "type": "object",
+      "properties": {
+        "format": { "$ref": "#/$defs/formatOne" },
+        "requires": { "$ref": "#/$defs/requires" },
+        "_": { "$ref": "#/$defs/note" },
+        "entries": { "type": "array", "items": { "$ref": "#/$defs/looksEntry" }, "maxItems": 4096 }
+      },
+      "required": ["format", "entries"],
+      "additionalProperties": false
+    },
+    "shapes": {
+      "type": "object",
+      "properties": {
+        "format": { "$ref": "#/$defs/formatOne" },
+        "requires": { "$ref": "#/$defs/requires" },
+        "_": { "$ref": "#/$defs/note" },
+        "entries": { "type": "array", "items": { "$ref": "#/$defs/shapesEntry" }, "maxItems": 4096 }
+      },
+      "required": ["format", "entries"],
+      "additionalProperties": false
+    },
+    "wearers": {
+      "type": "object",
+      "properties": {
+        "format": { "$ref": "#/$defs/formatOne" },
+        "requires": { "$ref": "#/$defs/requires" },
+        "_": { "$ref": "#/$defs/note" },
+        "entries": { "type": "array", "items": { "$ref": "#/$defs/wearersEntry" }, "maxItems": 4096 }
+      },
+      "required": ["format", "entries"],
+      "additionalProperties": false
+    },
+    "plugin": {
+      "type": "object",
+      "properties": {
+        "format": { "$ref": "#/$defs/formatOne" },
+        "requires": { "$ref": "#/$defs/requires" },
+        "_": { "$ref": "#/$defs/note" },
+        "class": {
+          "type": "string",
+          "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*(\\.[A-Za-z_$][A-Za-z0-9_$]*)+$"
+        }
+      },
+      "required": ["format", "class"],
+      "additionalProperties": false
+    }
+  }
+}
