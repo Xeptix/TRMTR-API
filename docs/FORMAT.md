@@ -46,12 +46,28 @@ Every `blocks` list (and `repairWith`) takes selectors in the edition's own spel
 |---|---|---|
 | `ns:name` | every state of the block | all |
 | `ns:name:3`, `ns:name:*` | one metadata value, or every one | 1.7.10, 1.12.2 |
-| `ns:name[half=bottom]` | the states with these properties, the game's own syntax | 1.12.2 on, where the block declares them |
+| `ns:name[half=bottom]` | the states with these properties, the game's own syntax | 1.12.2 on, where the block declares them; see below |
 | `#ns:tag` | every block in a block tag | 1.16.5 on |
 
 A selector the edition cannot read, or a block that is not installed, is skipped quietly and counted in the summary
 line. So a file meant for several editions names each edition's spelling side by side - `minecraft:grass` and
 `minecraft:grass_block` - and each edition reads its own.
+
+Properties select block states, and how many depends on the edition:
+
+| Editions | What `[prop=value]` reaches |
+|---|---|
+| 1.7.10 | Nothing: the edition has no block states, and such a selector is skipped and counted. `ns:name:3` selects by metadata. |
+| 1.12.2 | The states the block's sixteen metadata values stand for. A property the block does not keep in its metadata, such as a stair's `shape`, is worked out from its neighbours and cannot be selected. |
+| 1.16.5, 1.20.1, 1.21.1, 26.1.2, 26.2, 26.3 | Every property of every state. `minecraft:oak_stairs[half=top]` is all forty states of that half, `[half=top,facing=north]` the eight of those facing north, and the rest of the block is untouched: `[type=bottom]` says nothing about a top slab. |
+
+From 1.16.5 a selected state answers its entry everywhere the block would: its family, `resistance`, `cover`,
+`wearsThroughTo`, what pays to mend it, its `look`, its wear pictures and its shape, on the server and, through the
+server's table, on every client. An entry about the whole block and one about some of its states merge key by key,
+as any two entries do. A `shapes` entry's `state` selects the same way. In `repairWith` a property means nothing,
+because what pays is an item: `ns:name[prop=value]` is paid by `ns:name`. Wear pictures are kept per block in sixteen
+places, the same number the metadata editions have, so one block shows at most sixteen different looks and families
+across its states; past that its other states draw the block's own, and the log says so once.
 
 Entity selectors (in `entities`) are entity ids in the edition's own spelling - `Zombie` or `modid.Name` on 1.7.10,
 `ns:name` from 1.12.2 - or `#ns:tag` where the edition has entity tags.
@@ -80,10 +96,19 @@ Server data: the server decides, and a visiting client follows the server.
 | `resistance` | number | no | 1.0 to 64.0 | How many times more traffic the blocks take before they advance a stage. Healing is unaffected. |
 | `repairWith` | list of block selectors | no | | Blocks a tamper accepts as payment for mending them, besides a block of themselves. |
 | `cover` | string | no | `breaks`, `holds` | For ground cover: whether walking breaks it or it holds. |
-| `wearsThroughTo` | list of strings | no | `grass`, `dirt`, `sand`, `gravel`, `stone`, `cobble`, `nether`, `end`, `snow`, `ice` | The block's own chain: the surfaces it shows as it wears through, in the order the ground reaches them. Without it the block follows its family's chain. |
+| `wearsThroughTo` | list of strings | no | `grass`, `dirt`, `sand`, `gravel`, `stone`, `cobble`, `nether`, `end`, `snow`, `ice`, `none` | The block's own chain: the surfaces it shows as it wears through, in the order the ground reaches them. `none`, alone, keeps the block sinking as itself whatever its family wears through to. Without it the block follows its family's chain. |
 
 A file names the built-in families only. A file cannot make a new family: the family a block wears as is stored in
 every worn record of every world, so a new one is a change to TRMTR itself.
+
+A block's own chain is its family's in everything but what the ground shows as it sinks: the same run on its face,
+the same depth, the same number of steps and the same prices and heal times. It follows the player's settings as the
+family's list does, so with wearing through to other surfaces switched off the block sinks as itself, and a family
+switched off is passed over. The list belongs to the family it was written for: the entry's own `family`, or the
+family TRMTR finds for the block when the entry gives none. A block the player's own lists put in another family
+follows that family's chain. `none` beside a family is refused. Changing a block's list never loses its wear: a worn
+square keeps its depth and is shown as the new chain shows that depth, and a server sends each block's chain to its
+visitors, so a player without the file sees the server's.
 
 ## `looks/` - how worn ground is drawn
 
@@ -127,6 +152,10 @@ stands.
 ```
 
 Without an entry, a stair block is a stair, a half-height slab a slab, and everything else full.
+
+Once the ground at a block is worn, collision, the outline and the drawing follow its shape on the server and on
+every client: with `boxes`, each box is drawn and collided with on its own, and only the walked boxes sink. TRMTR takes
+the boxes as the block's own shape, so give the boxes the block collides with. Unworn, the block answers for itself.
 
 ### Keys: shapes
 
@@ -226,7 +255,8 @@ A bad file never stops the game.
 - Each read ends with one summary line at INFO: how many files, from how many mods and packs, how many blocks, shapes,
   wearers and plugins, how many files were refused and how many names were not installed.
 - `/trmt data` shows the sources read, the counts, every refusal still standing, and, for a named block, where each of
-  its values came from.
+  its values came from. A name with properties, such as `/trmt data minecraft:oak_stairs[half=top]`, leaves out the
+  selectors of other values, and from 1.16.5 the answer says how many of the block's states answer for themselves.
 
 ## How the format changes
 

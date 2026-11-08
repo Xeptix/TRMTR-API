@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[64,)"
+license = "CC BY-NC 4.0"
+
+[[mods]]
+modId = "example"
+version = "1.0.0"
+displayName = "TRMTR API example"
+authors = "Xeptix"
+description = '''
+The example mod of the TRMTR API: four blocks described by data, a plugin with a listener, a wearer rule and a render
+hook, and /examplewear. Built into development runs only.
+'''
+
+[[dependencies.example]]
+    modId = "minecraft"
+    mandatory = true
+    versionRange = "[26.1.2,26.1.3)"
+    ordering = "NONE"
+    side = "BOTH"
+
+# Optional, and made before TRMTR where both are there, so the plugin's answers are given before TRMTR loads plugins.
+[[dependencies.example]]
+    modId = "trmtgtnh"
+    mandatory = false
+    versionRange = "[0,)"
+    ordering = "BEFORE"
+    side = "BOTH"

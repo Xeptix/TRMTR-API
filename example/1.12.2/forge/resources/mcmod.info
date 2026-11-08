@@ -1,0 +1,11 @@
+[
+  {
+    "modid": "example",
+    "name": "TRMTR API example",
+    "description": "The example mod of the TRMTR API: four blocks described by data, a plugin with a listener, a wearer rule and a render hook, and /examplewear. Built into development runs only.",
+    "version": "1.0.0",
+    "mcversion": "1.12.2",
+    "authorList": ["Xeptix"],
+    "dependencies": []
+  }
+]

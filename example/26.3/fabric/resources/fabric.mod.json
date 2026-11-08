@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "example",
+  "version": "1.0.0",
+  "name": "TRMTR API example",
+  "description": "The example mod of the TRMTR API: four blocks described by data, a plugin with a listener, a wearer rule and a render hook, and /examplewear. Built into development runs only.",
+  "authors": [ "Xeptix" ],
+  "license": "CC-BY-NC-4.0",
+  "environment": "*",
+  "entrypoints": {
+    "preLaunch": [ "com.example.trmtr.fabric.ExamplePreLaunch" ],
+    "main": [ "com.example.trmtr.fabric.ExampleMod" ],
+    "client": [ "com.example.trmtr.fabric.ExampleClient" ]
+  },
+  "depends": {
+    "fabricloader": ">=0.11.1",
+    "fabric-api": "*",
+    "minecraft": "26.3"
+  },
+  "suggests": {
+    "trmtgtnh": "*"
+  }
+}

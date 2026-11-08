@@ -41,7 +41,8 @@ public interface WearDraw {
     void quad(float[] xyz, float[] uv, int face, int tint);
 
     /**
-     * Cuts a box out of the block. Clamped to the block; corners either way round. TRMTR draws what is left: the block's
+     * Cuts a box out of the block. Clamped to the block; corners either way round. TRMTR draws what is left: the
+     * block's
      * faces where they still stand, and the floor and walls the cut opens, which take the picture TRMTR draws at
      * {@code stage} (0 or less: the block's own sprite). Up to 16 boxes a draw.
      */

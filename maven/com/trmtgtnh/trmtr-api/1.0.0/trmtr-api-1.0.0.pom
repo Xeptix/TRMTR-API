@@ -11,8 +11,8 @@
   <url>https://github.com/Xeptix/TRMTR-API</url>
   <licenses>
     <license>
-      <name>CC BY-NC 4.0</name>
-      <url>https://creativecommons.org/licenses/by-nc/4.0/legalcode</url>
+      <name>MIT</name>
+      <url>https://opensource.org/licenses/MIT</url>
     </license>
   </licenses>
   <developers>

@@ -1,8 +1,8 @@
 package com.trmtgtnh.api;
 
 /**
- * Server thread. False keeps the ground there from wearing. Asked before wear lands; any rule saying false keeps it
- * off.
+ * Server thread, and never inside a chunk load. False keeps the ground there from wearing. Asked before wear lands; any
+ * rule saying false keeps it off.
  */
 public interface GroundRule {
 

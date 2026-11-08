@@ -55,3 +55,8 @@ their only provider.
 | `example/` | an example mod that uses every part of the API: one plugin and one set of data files for every edition, and a small registration class per loader |
 | `example-pack/` | an example resource pack and data pack, one folder per edition: looks for vanilla gravel and the example's blocks, stage pictures, and vanilla clay put into the dirt family |
 | `maven/` | the Maven repository the Gradle lines above read: the jar, its sources and javadoc, its POM, and checksums of each |
+
+## Licence
+
+The API (this repository: its source, documents, example mod and example pack) is under the MIT License, in `LICENSE`.
+TRMT: Reimagined itself is not: it stays under CC BY-NC 4.0.

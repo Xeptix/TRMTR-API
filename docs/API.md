@@ -114,6 +114,7 @@ public interface Wear {
     String family();
     String appearance();
     int stage();
+    int stages();
     int sinkPixels();
     int step();
     int steps();
@@ -200,8 +201,9 @@ public interface WearDraw {
   for a client's (the table at the end names them) - and anywhere else gives its no-answer, null or 0, and TRMTR says
   so once in the log. `familyOf` returns a family's key, or null for a block that does not wear. `familyAt` asks the same of the block at a position, read with its metadata (1.7.10) or its state (1.12.2
   on), and is the one form that answers for any block in every edition. `chainLength` is how many steps a family's
-  run takes from untouched to the deepest rut; `chainLengthAt` is the same for the block at a position, which differs
-  from its family's once a data file gives that block a `wearsThroughTo` of its own (`FORMAT.md`, "families/").
+  run takes from untouched to the deepest rut; `chainLengthAt` is the same for the block at a position, on the block's
+  own chain once a data file gives that block a `wearsThroughTo` of its own (`FORMAT.md`, "families/"): the same
+  length as its family's, except a grass block's, whose list decides the depth its run sinks to.
   `wearAt` reads the record at a position: on the server, the whole record; on a client, what the server has sent
   it, with `progress()` -1.
 - **Asking about a block on 1.7.10.** A 1.7.10 `Block` is not the whole block: its metadata, which a family can be
@@ -212,9 +214,16 @@ public interface WearDraw {
   keeps the surface the same in all eight editions, with no game type and no signature of 1.7.10's own, and no
   question ever answers with another metadata value's family.
 - **`Wear`** is one record. `family()` is what the ground is; `appearance()` the family it is drawn as by now, which
-  differs once it has worn through. `stage()` is the drawn stage, `sinkPixels()` how far it has sunk, `step()` and
-  `steps()` its place on its run and the run's length, and `fraction()` the two as a share. `frozen()` is whether it is
-  held as it is, `reinforcement()` its reinforcement level, 0 to 3, and `progress()` the server's count toward the next
+  differs once it has worn through. `stage()` is the drawn stage and `stages()` how many this stretch of
+  the run has, the face's while it stands flat and one pixel's once sunk; `sinkPixels()` is how far the ground is drawn
+  sunk there: `wearAt` and `WearDraw.wear()` give the depth drawn on that block by the same rule the drawing uses, so it
+  is nought where the world has its depth off or a shape says `"sinks": false`, and it is held by the family's cap, a
+  slab's or stair's half of it, and a shape's `maxSinkPixels` and height, though the record goes on counting. The one
+  limit: a record `WearListener.afterChange` is handed where the engine holds only its chain and not its block counts
+  the depth switch and the family's cap but not the block's shape, so a listener that needs the exact depth asks
+  `wearAt`. `step()` and
+  `steps()` its place on its run and the run's length (the block's own chain, where it has one), and `fraction()`
+  the two as a share. `frozen()` is whether it is held as it is, `reinforcement()` its reinforcement level, 0 to 3, and `progress()` the server's count toward the next
   step.
 - **`Actions`** change the ground, on the server thread only: `wear` adds wear as if that much traffic had passed,
   `restore` mends steps, `freeze` holds or releases a record, and `forget` drops a record so the ground is untouched.
@@ -223,7 +232,8 @@ public interface WearDraw {
 - **`WearListener`**: `beforeWear` is asked before every bit of wear, with what caused it, and may return a smaller,
   larger or zero amount; a larger one is held to at most 1,000,000, as is a `WearerRule`'s multiplier, so the wear a
   record banks stays a number. `afterChange` is told after a record changes for any reason - wear, healing, a tamper, a
-  command - with the record before and after (either is null where there was none).
+  command - with the record before and after (either is null where there was none): at once, or at the end of the
+  tick for a change made while a chunk loaded ("Chunk loading").
 - **`WearContext.Cause`**: `STEP` a player or mob walking, `MOUNT` a ridden mob or vehicle, `BLAST` an explosion,
   `IMPACT` something landing hard from a height, `GOLEM` the Golem of Ways, `COMMAND` a TRMTR command, `API` a call through `Actions`.
 - **`GroundRule`** is asked before wear lands; any rule saying false keeps it off.
@@ -233,6 +243,30 @@ public interface WearDraw {
   sprites and tints, and the light; `quad` and `box` add geometry, with `box` taking a stage so the shape can deepen as
   the ground wears. `nativeContext()` is the edition's own drawing object, for a mod that needs more than `quad` and
   `box`. Returning false hands the block back to TRMTR.
+
+## Chunk loading
+
+A chunk's load event comes on the server thread while the chunk is still being finished. From 1.16.5 on, a read of
+that chunk through the world from there waits for a step that is waiting for the reader, and the server stops for good;
+on 1.7.10 and 1.12.2 the read answers, but a read of the chunk beside it loads that one inside the first. So nothing of
+a plugin's runs inside a chunk's load or unload, in any edition, and a hook may read the world and ask for chunks as any
+server code may.
+
+- **`afterChange` waits for the tick.** A chunk coming back is healed for the time it was away as it arrives. What that
+  changes is held and told at the end of the server tick, on the server thread, with the chunk whole, in the order it
+  happened. A change after it waits behind it, so the listeners hear every change in order. `before` and `after` say
+  what the record was then; the record and the world may have moved on, and the chunk may even have unloaded again, in
+  which case a read of it loads it as any server read does.
+- **How much waits.** At most 4,096 changes are told in a tick and the rest go on the next. At most 65,536 wait; past
+  that a change is not told, said once in the log. What still waits when the server stops is dropped, as the world it
+  names has gone, so a mod keeping its own copy of what is worn reads it afresh when a world opens.
+- **A rule cannot wait.** A `GroundRule`, `beforeWear` and a `WearerRule` give an answer, so they are asked only outside
+  chunk loading: a chunk loading wears nothing, so TRMTR has no reason to ask there. Were another way in to reach one
+  inside a load, the rule is not called: the wear does not land, a multiplier stays as TRMTR worked it out, and it is
+  said once in the log.
+- **A mod's own load handler.** `Queries` and `Actions` never load a chunk or wait for one. A position whose chunk is not
+  loaded and whole, which from 1.16.5 on includes a chunk in its own load event, gives a query's no-answer and an
+  action's false. A mod wanting to act on a chunk as it arrives keeps the position and acts on the next tick.
 
 ## Drawing a hooked block
 
@@ -248,6 +282,15 @@ public interface WearDraw {
   block whole. Up to 16 boxes a draw; past that a box is ignored, said once. A grass side keeps its tinted fringe.
 - **`quad` adds** one quad over what is left: four corners, x y z each, counter-clockwise seen from the side it faces;
   uv four pairs, 0 to 1 across the block's own sprite on `face`; tint `0xRRGGBB`, multiplied with that face's light.
+  From 26.1 a quad holds no color of its own, so it takes one of sixteen tint slots of the block: the first sixteen
+  colors of a draw are told apart, and any past them takes the sixteenth's.
+- **Light.** A hooked block is drawn flat, with no smooth lighting. An outer side and the underside are lit by the cell
+  each looks into; the top, the floors and walls a cut opens, and every `quad` by the cell above the block, which is what
+  `light()` reports. So a cut is lit as the ground beside it is, however deep it goes. A quad put straight into
+  `nativeContext()` is the mod's own: on the editions where that is a list of baked quads it goes with no side and the
+  game lights it from where it stands, which under a cut is dark. What falls short of this, each still drawn: Embeddium
+  on 1.16.5 and a Canvas material on 1.16.5 keep smooth lighting, so a cut's corners draw darker than its middle; OptiFine
+  from 1.16.5 is not held to it.
 - **Nothing is drawn until `draw` returns true.** What `box` and `quad` were given is kept and drawn after, so a hook
   that returns false or throws leaves nothing behind and TRMTR draws the block as usual. If TRMTR cannot draw what was
   asked for (a picture that will not resolve or a face with none, say), it takes back what it had written, and what
@@ -284,7 +327,7 @@ mappings' name.
 |---|---|---|---|---|---|---|---|---|
 | 1.7.10 | Forge | `net.minecraft.world.World` | `net.minecraft.entity.Entity` | `net.minecraft.block.Block`, answered only where all its metadata values share a family ("Asking about a block on 1.7.10") | `net.minecraft.util.IIcon` | `net.minecraft.client.renderer.Tessellator` | `ns:name`, `ns:name:3`, `ns:name:*` | the server thread for a server's `World`, the client thread for a client's |
 | 1.12.2 | Forge | `net.minecraft.world.World` | `net.minecraft.entity.Entity` | `net.minecraft.block.state.IBlockState` | `net.minecraft.client.renderer.texture.TextureAtlasSprite` | `List<net.minecraft.client.renderer.block.model.BakedQuad>` | as 1.7.10, and `ns:name[prop=value]` | as 1.7.10 |
-| 1.16.5 | Forge, Fabric | `net.minecraft.world.level.Level` | `net.minecraft.world.entity.Entity` | `net.minecraft.world.level.block.state.BlockState` | `net.minecraft.client.renderer.texture.TextureAtlasSprite` | `List<net.minecraft.client.renderer.block.model.BakedQuad>` | `ns:name`, `ns:name[prop=value]`, `#ns:tag` | the server thread for a server's `Level`, the client's main thread for a client's |
+| 1.16.5 | Forge, Fabric | `net.minecraft.world.level.Level` | `net.minecraft.world.entity.Entity` | `net.minecraft.world.level.block.state.BlockState` | `net.minecraft.client.renderer.texture.TextureAtlasSprite` | `List<net.minecraft.client.renderer.block.model.BakedQuad>` | `ns:name`, `ns:name[prop=value]` on every property, `#ns:tag` | the server thread for a server's `Level`, the client's main thread for a client's |
 | 1.20.1 | Forge, Fabric | as 1.16.5 | as 1.16.5 | as 1.16.5 | as 1.16.5 | as 1.16.5 | as 1.16.5 | as 1.16.5 |
 | 1.21.1 | Forge, NeoForge, Fabric | as 1.16.5 | as 1.16.5 | as 1.16.5 | as 1.16.5 | as 1.16.5 | as 1.16.5 | as 1.16.5 |
 | 26.1.2, 26.2, 26.3 | Forge, NeoForge, Fabric | as 1.16.5 | as 1.16.5 | as 1.16.5 | as 1.16.5 | `List<net.minecraft.client.resources.model.geometry.BakedQuad>` | as 1.16.5 | as 1.16.5 |

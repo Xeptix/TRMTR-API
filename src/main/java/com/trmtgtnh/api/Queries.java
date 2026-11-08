@@ -4,7 +4,9 @@ package com.trmtgtnh.api;
  * Reads what TRMTR has published, never a half-built table. A question by key ({@code familyOf}, {@code chainLength})
  * may be asked on any thread. A question about a position ({@code familyAt}, {@code chainLengthAt}, {@code wearAt})
  * reads the world, so it is answered only on that world's own thread, the server's for a server's world and the
- * client's for a client's; anywhere else it gives its no-answer (null or 0) and TRMTR says so once in the log.
+ * client's for a client's; anywhere else it gives its no-answer (null or 0) and TRMTR says so once in the log. It never
+ * loads a chunk or waits for one: a position whose chunk is not loaded and whole gives its no-answer too (API.md,
+ * "Chunk loading").
  */
 @ImplementedByTrmtr
 public interface Queries {

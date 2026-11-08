@@ -2,7 +2,8 @@ package com.trmtgtnh.api;
 
 /**
  * Server thread only. Elsewhere each returns false, and says so once. Each returns whether it did anything, and each
- * passes through the listeners and rules with the cause {@link WearContext.Cause#API}.
+ * passes through the listeners and rules with the cause {@link WearContext.Cause#API}. None loads a chunk or waits for
+ * one: on a position whose chunk is not loaded and whole each returns false (API.md, "Chunk loading").
  */
 @ImplementedByTrmtr
 public interface Actions {

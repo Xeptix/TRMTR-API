@@ -1,11 +1,17 @@
 {
   "format": 1,
   "requires": "1.0",
-  "_": "Data half of the TRMTR example pack: vanilla clay wears as dirt.",
+  "_": "Data half of the TRMTR example pack: vanilla clay wears as dirt, and of an oak slab only the top half does.",
   "entries": [
     {
       "blocks": [
         "minecraft:clay"
+      ],
+      "family": "dirt"
+    },
+    {
+      "blocks": [
+        "minecraft:oak_slab[type=top]"
       ],
       "family": "dirt"
     }

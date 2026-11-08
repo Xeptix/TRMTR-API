@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "normal": { "model": "example:loam_step" }
+  }
+}

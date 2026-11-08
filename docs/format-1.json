@@ -59,9 +59,11 @@
     "familyChain": {
       "title": "list of strings",
       "type": "array",
-      "items": { "enum": ["grass", "dirt", "sand", "gravel", "stone", "cobble", "nether", "end", "snow", "ice"] },
+      "items": { "enum": ["grass", "dirt", "sand", "gravel", "stone", "cobble", "nether", "end", "snow", "ice", "none"] },
       "minItems": 1,
-      "uniqueItems": true
+      "uniqueItems": true,
+      "if": { "contains": { "const": "none" } },
+      "then": { "maxItems": 1 }
     },
     "boxes": {
       "title": "list of boxes",

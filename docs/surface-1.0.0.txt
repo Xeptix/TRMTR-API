@@ -47,6 +47,7 @@ method Wear.progress() float abstract
 method Wear.reinforcement() int abstract
 method Wear.sinkPixels() int abstract
 method Wear.stage() int abstract
+method Wear.stages() int abstract
 method Wear.step() int abstract
 method Wear.steps() int abstract
 method WearContext.block() String abstract
