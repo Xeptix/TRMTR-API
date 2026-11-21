@@ -233,7 +233,8 @@ public interface WearDraw {
   larger or zero amount; a larger one is held to at most 1,000,000, as is a `WearerRule`'s multiplier, so the wear a
   record banks stays a number. `afterChange` is told after a record changes for any reason - wear, healing, a tamper, a
   command - with the record before and after (either is null where there was none): at once, or at the end of the
-  tick for a change made while a chunk loaded ("Chunk loading").
+  tick for a change made while a chunk loaded ("Chunk loading"). A record travels with the block a piston pushes or
+  pulls, and is told as two changes: gone from the square the block left, and on the square it lands on.
 - **`WearContext.Cause`**: `STEP` a player or mob walking, `MOUNT` a ridden mob or vehicle, `BLAST` an explosion,
   `IMPACT` something landing hard from a height, `GOLEM` the Golem of Ways, `COMMAND` a TRMTR command, `API` a call through `Actions`.
 - **`GroundRule`** is asked before wear lands; any rule saying false keeps it off.

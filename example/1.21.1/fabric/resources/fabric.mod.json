@@ -5,7 +5,7 @@
   "name": "TRMTR API example",
   "description": "The example mod of the TRMTR API: four blocks described by data, a plugin with a listener, a wearer rule and a render hook, and /examplewear. Built into development runs only.",
   "authors": [ "Xeptix" ],
-  "license": "CC-BY-NC-4.0",
+  "license": "MIT",
   "environment": "*",
   "entrypoints": {
     "preLaunch": [ "com.example.trmtr.fabric.ExamplePreLaunch" ],

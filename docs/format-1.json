@@ -59,7 +59,8 @@
     "familyChain": {
       "title": "list of strings",
       "type": "array",
-      "items": { "enum": ["grass", "dirt", "sand", "gravel", "stone", "cobble", "nether", "end", "snow", "ice", "none"] },
+      "items": { "enum": ["grass", "dirt", "sand", "gravel", "stone", "cobble", "nether", "end", "snow", "ice", "flesh",
+                           "taint", "sculk", "cloud", "none"] },
       "minItems": 1,
       "uniqueItems": true,
       "if": { "contains": { "const": "none" } },
@@ -85,7 +86,7 @@
         "family": {
           "type": "string",
           "enum": ["grass", "dirt", "sand", "gravel", "stone", "cobble", "leaves", "vegetation", "nether", "end",
-                   "snow", "ice", "none"]
+                   "snow", "ice", "flesh", "taint", "sculk", "cloud", "none"]
         },
         "resistance": { "type": "number", "minimum": 1.0, "maximum": 64.0 },
         "repairWith": { "$ref": "#/$defs/blockList" },
@@ -103,12 +104,15 @@
         "look": {
           "type": "string",
           "enum": ["grass", "dirt", "sand", "polish", "crack", "smooth", "crack_lite", "smooth_heavy", "dirt_lite",
-                   "smooth_crack", "smooth_dirt", "crack_dirt", "crack_dirt_lite"]
+                   "smooth_crack", "smooth_dirt", "crack_dirt", "crack_dirt_lite", "flesh", "taint",
+                   "sculk", "cloud", "sand_trodden", "gravel_parted", "cobble_polished", "snow_packed",
+                   "ice_scuffed", "nether_charred", "end_bleached"]
         },
         "strength": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
         "face": { "$ref": "#/$defs/texture" },
         "innerLayer": { "$ref": "#/$defs/texture" },
-        "stages": { "$ref": "#/$defs/stagePictures" }
+        "stages": { "$ref": "#/$defs/stagePictures" },
+        "turns": { "type": "boolean" }
       },
       "required": ["blocks"],
       "minProperties": 2,

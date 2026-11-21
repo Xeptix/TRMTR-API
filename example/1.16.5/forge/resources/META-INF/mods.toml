@@ -1,6 +1,6 @@
 modLoader = "javafml"
 loaderVersion = "[36,)"
-license = "CC BY-NC 4.0"
+license = "MIT"
 
 [[mods]]
 modId = "example"

@@ -92,11 +92,11 @@ Server data: the server decides, and a visiting client follows the server.
 | Key | Type | Required | Values | What it does |
 |---|---|---|---|---|
 | `blocks` | list of block selectors | yes | | The blocks this entry is about. |
-| `family` | string | no | `grass`, `dirt`, `sand`, `gravel`, `stone`, `cobble`, `leaves`, `vegetation`, `nether`, `end`, `snow`, `ice`, `none` | The family the blocks wear as. `none` stands the blocks aside: they never wear and are never painted, whatever detection would have said. |
+| `family` | string | no | `grass`, `dirt`, `sand`, `gravel`, `stone`, `cobble`, `leaves`, `vegetation`, `nether`, `end`, `snow`, `ice`, `flesh`, `taint`, `sculk`, `cloud`, `none` | The family the blocks wear as. `none` stands the blocks aside: they never wear and are never painted, whatever detection would have said. |
 | `resistance` | number | no | 1.0 to 64.0 | How many times more traffic the blocks take before they advance a stage. Healing is unaffected. |
 | `repairWith` | list of block selectors | no | | Blocks a tamper accepts as payment for mending them, besides a block of themselves. |
 | `cover` | string | no | `breaks`, `holds` | For ground cover: whether walking breaks it or it holds. |
-| `wearsThroughTo` | list of strings | no | `grass`, `dirt`, `sand`, `gravel`, `stone`, `cobble`, `nether`, `end`, `snow`, `ice`, `none` | The block's own chain: the surfaces it shows as it wears through, in the order the ground reaches them. `none`, alone, keeps the block sinking as itself whatever its family wears through to. Without it the block follows its family's chain. |
+| `wearsThroughTo` | list of strings | no | `grass`, `dirt`, `sand`, `gravel`, `stone`, `cobble`, `nether`, `end`, `snow`, `ice`, `flesh`, `taint`, `sculk`, `cloud`, `none` | The block's own chain: the surfaces it shows as it wears through, in the order the ground reaches them. `none`, alone, keeps the block sinking as itself whatever its family wears through to. Without it the block follows its family's chain. |
 
 A file names the built-in families only. A file cannot make a new family: the family a block wears as is stored in
 every worn record of every world, so a new one is a change to TRMTR itself.
@@ -132,11 +132,12 @@ Texture names are the edition's own: an icon name on 1.7.10 (`example:loam_top`)
 | Key | Type | Required | Values | What it does |
 |---|---|---|---|---|
 | `blocks` | list of block selectors | yes | | The blocks this entry is about. |
-| `look` | string | no | `grass`, `dirt`, `sand`, `polish`, `crack`, `smooth`, `crack_lite`, `smooth_heavy`, `dirt_lite`, `smooth_crack`, `smooth_dirt`, `crack_dirt`, `crack_dirt_lite` | The wear look, worked from the block's own pixels, by its id. The ids never change once they ship. |
+| `look` | string | no | `grass`, `dirt`, `sand`, `polish`, `crack`, `smooth`, `crack_lite`, `smooth_heavy`, `dirt_lite`, `smooth_crack`, `smooth_dirt`, `crack_dirt`, `crack_dirt_lite`, `flesh`, `taint`, `sculk`, `cloud`, `sand_trodden`, `gravel_parted`, `cobble_polished`, `snow_packed`, `ice_scuffed`, `nether_charred`, `end_bleached` | The wear look, worked from the block's own pixels, by its id. The ids never change once they ship. `sand` and `polish` are older ids, still read so an older file keeps working; both draw `dirt`. |
 | `strength` | number | no | 0.0 to 1.0 | How strongly the look is applied. Lower leaves more of the block's own character showing. |
 | `face` | texture name | no | | The texture to wear in place of the block's own top. |
 | `innerLayer` | texture name | no | | What shows behind a face that is cut away, such as lava behind a cracked lava stone. |
 | `stages` | list of texture names | no | 2 to 16 pictures | Pictures drawn by hand, which replace the generated ones. TRMTR spreads its wear stages across them in order. Each is square, at the block's own size. |
+| `turns` | boolean | no | `true`, `false` | Whether the block's worn top is turned a quarter at a time from block to block, so worn ground does not read as a repeating tile. Left out, TRMTR reads the face itself: a face with no direction turns, and one with lines or a grain (bricks, planks, tiles, a frame) does not. Give `false` for a face whose picture must keep its way up, `true` for one TRMTR mistakes for directional. |
 
 ## `shapes/` - the shape wear is drawn on and sinks into
 
@@ -232,6 +233,9 @@ TRMTR reads data in layers. A higher layer overrides a lower one.
 - Data beats detection, and the player beats data. A player's exclusions, a family switched off, the per-family block
   lists and the mob list all sit in layer 4. Data is never written into the player's config, so removing a mod leaves
   nothing of it behind.
+- Detection writes what it finds into the per-family block lists, so a line there may be one nobody chose. A line that
+  names a block for the family detection gives it counts as detection's, below data, so a data file can correct it; a
+  line that names a block for any other family was written by a person, and stays in layer 4.
 - Families, shapes and wearers are the server's; looks are the client's. A resource pack's `families/`, `shapes/` or
   `wearers/` folder, and a data pack's `looks/`, are ignored with one line, because a resource pack deciding where a
   player stands would put a client at odds with its server.
