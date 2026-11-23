@@ -1,4 +1,4 @@
-# The TRMTR Java API (trmtr-api 1.0.0)
+# The TRMTR Java API (trmtr-api 1.0.1)
 
 Most of what a mod wants from TRMT: Reimagined - which of its blocks wear, how they look, what shape they sink into,
 which of its mobs wear the ground - is data, and `FORMAT.md` covers it without any Java. The Java API is for the rest:
@@ -18,12 +18,15 @@ repositories {
     maven { url "https://raw.githubusercontent.com/Xeptix/TRMTR-API/main/maven" }
 }
 dependencies {
-    compileOnly "com.trmtgtnh:trmtr-api:1.0.0"
+    compileOnly "com.trmtgtnh:trmtr-api:1.0.1"
 }
 ```
 
-or, from Modrinth's Maven (`https://api.modrinth.com/maven`), `compileOnly "maven.modrinth:trmtr-api:1.0.0"`. The jar
-names no game class, so plain `compileOnly` works under Loom and ForgeGradle alike.
+or, from Modrinth's Maven (`https://api.modrinth.com/maven`), `compileOnly "maven.modrinth:trmtr-api:1.0.1"`. On
+Modrinth, trmtr-api 1.0.1 is one version for each loader family (Fabric, Forge and NeoForge), all numbered 1.0.1; each
+jar holds the same classes as the GitHub Maven's, with only its own loader's metadata beside them, so whichever one
+Modrinth's Maven hands back compiles the same. The jar names no game class, so plain `compileOnly` works under Loom and
+ForgeGradle alike.
 
 Then name the plugin class in `assets/<your namespace>/trmtr/plugin.json` (`FORMAT.md`, "plugin.json"). Nothing else
 is needed: no registration call, no event, no dependency at run time.
@@ -38,8 +41,9 @@ is needed: no registration call, no event, no dependency at run time.
 
 ## The surface
 
-This is the whole public surface of 1.0.0. Bodies are TRMTR's own and left out. `surface-1.0.0.txt` is the same
-surface as a list, one line per member, and is what each later version is checked against.
+This is the whole public surface of 1.0: 1.0.1 is a patch and changes none of it. Bodies are TRMTR's own and left out.
+`surface-1.0.0.txt` is the same surface as a list, one line per member, and is what each later version is checked
+against.
 
 ```java
 package com.trmtgtnh.api;
@@ -54,7 +58,7 @@ import java.util.List;
 /** Where a mod reaches TRMTR. */
 public final class TrmtrApi {
     /** This API's version, which is not the mod's. */
-    public static final String VERSION = "1.0.0";
+    public static final String VERSION = "1.0.1";
     /** TRMTR itself. Set before any plugin is called. */
     public static Trmtr get() { ... }
 }

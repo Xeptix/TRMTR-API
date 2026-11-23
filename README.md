@@ -23,7 +23,7 @@ repositories {
     maven { url "https://raw.githubusercontent.com/Xeptix/TRMTR-API/main/maven" }
 }
 dependencies {
-    compileOnly "com.trmtgtnh:trmtr-api:1.0.0"
+    compileOnly "com.trmtgtnh:trmtr-api:1.0.1"
 }
 ```
 
