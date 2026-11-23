@@ -2,3 +2,4 @@
 # A published version's surface record, api/surface-<major>.<minor>.0.txt, is frozen from then on: it must equal its
 # content at that commit, and a line here is never removed (DEPRECATION.md, "Published records"). A version's line is
 # written when it is published; none has been yet.
+1.0.1 c77f4d5b53d5be7ed3fce4a0089fe34b5ab49f93
